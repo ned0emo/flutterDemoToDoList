@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:path_provider/path_provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,15 +17,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Demo TODO List',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.deepPurple,
       ),
       home: const MyHomePage(title: 'Список задач'),
@@ -41,9 +36,79 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<String> taskList = [];
   List<String> completedTaskList = [];
-  String taskText = "";
 
-  Future<void> showAddTaskDialog() async {
+  String taskText = '';
+  String localDir = '';
+
+  File? taskFile;
+  File? completedTaskFile;
+
+  Future<void> loadTaskLists() async {
+    localDir = await _localPath;
+    taskFile = File('$localDir/taskData/taskList.txt');
+    completedTaskFile = File('$localDir/taskData/completedTaskList.txt');
+
+    if (taskFile != null && (taskFile!.existsSync())) {
+      taskList = taskFile!.readAsLinesSync();
+    }
+
+    if (completedTaskFile != null && (completedTaskFile!.existsSync())) {
+      completedTaskList = completedTaskFile!.readAsLinesSync();
+    }
+
+    setState(() {});
+  }
+
+  Future<String> get _localPath async {
+    final directory = await getApplicationDocumentsDirectory();
+
+    return directory.path;
+  }
+
+  void writeTaskFile() {
+    final taskDataDir = Directory('$localDir/taskData');
+    taskDataDir.createSync();
+
+    var writer = taskFile?.openWrite(mode: FileMode.write);
+
+    if (writer == null) {
+      Fluttertoast.showToast(
+        msg: "Ошибка записи", // message
+        toastLength: Toast.LENGTH_SHORT, // length
+        gravity: ToastGravity.CENTER, // duration
+      );
+
+      loadTaskLists();
+
+      return;
+    }
+
+    for (String task in taskList) {
+      writer.write('$task\n');
+    }
+    writer.close();
+
+    writer = completedTaskFile?.openWrite(mode: FileMode.write);
+
+    if (writer == null) {
+      Fluttertoast.showToast(
+        msg: "Ошибка записи", // message
+        toastLength: Toast.LENGTH_SHORT, // length
+        gravity: ToastGravity.CENTER, // duration
+      );
+
+      loadTaskLists();
+
+      return;
+    }
+
+    for (String task in completedTaskList) {
+      writer.write('$task\n');
+    }
+    writer.close();
+  }
+
+  Future<void> showAddTaskDialog() {
     return showDialog<void>(
       context: context,
       barrierDismissible: true,
@@ -80,6 +145,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 if (taskText.isNotEmpty) {
                   taskList.add(taskText);
                   taskText = '';
+
+                  writeTaskFile();
+
                   setState(() {});
                   Navigator.of(context).pop();
                 }
@@ -93,6 +161,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    loadTaskLists();
+
     return DefaultTabController(
       initialIndex: 0,
       length: 2,
@@ -113,20 +183,24 @@ class _MyHomePageState extends State<MyHomePage> {
                     itemBuilder: (BuildContext context, int index) {
                       return Row(
                         children: <Widget>[
+                          /**Текст задачи*/
                           Expanded(
                             flex: 6,
                             child: Text(
-                              '${index+1}. ${taskList[index]}',
+                              '${index + 1}. ${taskList[index]}',
                               style: const TextStyle(
                                 fontSize: 18,
                               ),
                             ),
                           ),
+                          /**Пометить задачу завершенной*/
                           Expanded(
                             child: TextButton(
                               onPressed: () => {
                                 completedTaskList.add(taskList[index]),
                                 taskList.removeAt(index),
+                                writeTaskFile(),
+                                //writeCompletedTaskFile(),
                                 setState(() {}),
                               },
                               child: const Icon(
@@ -135,10 +209,12 @@ class _MyHomePageState extends State<MyHomePage> {
                               ),
                             ),
                           ),
+                          /**Удалить задачу*/
                           Expanded(
                             child: TextButton(
                               onPressed: () => {
                                 taskList.removeAt(index),
+                                writeTaskFile(),
                                 setState(() {}),
                               },
                               child: const Icon(
@@ -178,10 +254,12 @@ class _MyHomePageState extends State<MyHomePage> {
                               ),
                             ),
                           ),
+                          /**Удалить завершенную задачу*/
                           Expanded(
                             child: TextButton(
                               onPressed: () => {
                                 completedTaskList.removeAt(index),
+                                writeTaskFile(),
                                 setState(() {}),
                               },
                               child: const Icon(
