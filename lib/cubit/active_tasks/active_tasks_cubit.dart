@@ -1,22 +1,38 @@
 import 'package:bloc/bloc.dart';
-import 'package:fluttertest/cubit/completed_tasks/completed_tasks_cubit.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:fluttertest/cubit/active_tasks/active_tasks_repository.dart';
 
 part 'active_tasks_state.dart';
 
 class ActiveTasksCubit extends Cubit<ActiveTasksState> {
-  ActiveTasksCubit() : super(ActiveTasksState(taskList: ['meow', 'wow', 'heh', 'keks']));
+  ActiveTasksCubit() : super(ActiveTasksState(taskList: [], isLoading: true));
+  final storage = const FlutterSecureStorage();
+  final repository = ActiveTasksRepository();
 
-  void addTask(String newTask){
-    List<String> newTaskList = state.taskList;
-    newTaskList.add(newTask);
+  Future<void> loadTasks() async {
+    final tasks = await repository.loadTasks();
 
-    emit(ActiveTasksState(taskList: newTaskList));
+    if (tasks != null) {
+      emit(ActiveTasksState(taskList: tasks.split('\n'), isLoading: false));
+    }
+    else{
+      emit(ActiveTasksState(taskList: [], isLoading: false));
+    }
   }
 
-  void removeTask(int index){
-    List<String> newTaskList = state.taskList;
+  Future<void> addTask(String newTask) async {
+    final newTaskList = state.taskList;
+    newTaskList.add(newTask);
+
+    await repository.saveTasks(taskList: newTaskList);
+    emit(ActiveTasksState(taskList: newTaskList, isLoading: false));
+  }
+
+  Future<void> removeTask(int index) async {
+    final newTaskList = state.taskList;
     newTaskList.removeAt(index);
-    emit(ActiveTasksState(taskList: newTaskList));
+
+    await repository.saveTasks(taskList: newTaskList);
+    emit(ActiveTasksState(taskList: newTaskList, isLoading: false));
   }
 }
