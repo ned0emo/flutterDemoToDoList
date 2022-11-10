@@ -5,17 +5,19 @@ import 'package:fluttertest/cubit/completed_tasks/completed_tasks_repository.dar
 part 'completed_tasks_state.dart';
 
 class CompletedTasksCubit extends Cubit<CompletedTasksState> {
-  CompletedTasksCubit() : super(CompletedTasksState(completedTaskList: [], isLoading: true));
   final storage = const FlutterSecureStorage();
-  final repository = CompletedTasksRepository();
+  final CompletedTasksRepository repository; // = CompletedTasksRepository();
+
+  CompletedTasksCubit({required this.repository})
+      : super(CompletedTasksState(completedTaskList: [], isLoading: true));
 
   Future<void> loadTasks() async {
     final tasks = await repository.loadTasks();
 
     if (tasks != null) {
-      emit(CompletedTasksState(completedTaskList: tasks.split('\n'), isLoading: false));
-    }
-    else{
+      emit(CompletedTasksState(
+          completedTaskList: tasks.split('\n'), isLoading: false));
+    } else {
       emit(CompletedTasksState(completedTaskList: [], isLoading: false));
     }
   }

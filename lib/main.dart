@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertest/cubit/active_tasks/active_tasks_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertest/cubit/active_tasks/active_tasks_repository.dart';
+import 'package:fluttertest/cubit/completed_tasks/completed_tasks_repository.dart';
 
 import 'cubit/completed_tasks/completed_tasks_cubit.dart';
 
@@ -14,21 +16,35 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
+    return MultiRepositoryProvider(
       providers: [
-        BlocProvider(
-          create: (context) => ActiveTasksCubit(),
+        RepositoryProvider<ActiveTasksRepository>(
+          create: (context) => ActiveTasksRepository(),
         ),
-        BlocProvider(
-          create: (context) => CompletedTasksCubit(),
+        RepositoryProvider<CompletedTasksRepository>(
+          create: (context) => CompletedTasksRepository(),
         ),
       ],
-      child: MaterialApp(
-        title: 'Demo TODO List',
-        theme: ThemeData(
-          primarySwatch: Colors.deepPurple,
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => ActiveTasksCubit(
+                repository: context.read<ActiveTasksRepository>())
+              ..loadTasks(),
+          ),
+          BlocProvider(
+            create: (context) => CompletedTasksCubit(
+                repository: context.read<CompletedTasksRepository>())
+              ..loadTasks(),
+          ),
+        ],
+        child: MaterialApp(
+          title: 'Список задач',
+          theme: ThemeData(
+            primarySwatch: Colors.deepPurple,
+          ),
+          home: const MyHomePage(),
         ),
-        home: const MyHomePage(),
       ),
     );
   }
@@ -97,12 +113,11 @@ class MyHomePage extends StatelessWidget {
         ),
         body: TabBarView(
           children: <Widget>[
-            //вкладка с активными задачами
+            /**
+             * Вкладка с активными задачами
+             */
             BlocBuilder<ActiveTasksCubit, ActiveTasksState>(
               builder: (context, state) {
-                //Загрузка списка
-                BlocProvider.of<ActiveTasksCubit>(context).loadTasks();
-
                 if (state.taskList.isNotEmpty) {
                   return ListView.separated(
                     padding: const EdgeInsets.all(8),
@@ -110,7 +125,9 @@ class MyHomePage extends StatelessWidget {
                     itemBuilder: (BuildContext context, int index) {
                       return Row(
                         children: <Widget>[
-                          /**Текст задачи*/
+                          /**
+                           * Текст задачи
+                           */
                           Expanded(
                             flex: 6,
                             child: Text(
@@ -120,7 +137,9 @@ class MyHomePage extends StatelessWidget {
                               ),
                             ),
                           ),
-                          /**Пометить задачу завершенной*/
+                          /**
+                           * Пометить задачу завершенной
+                           */
                           Expanded(
                             child: TextButton(
                               onPressed: () => {
@@ -135,7 +154,9 @@ class MyHomePage extends StatelessWidget {
                               ),
                             ),
                           ),
-                          /**Удалить задачу*/
+                          /**
+                           * Удалить задачу
+                           */
                           Expanded(
                             child: TextButton(
                               onPressed: () => {
@@ -171,11 +192,11 @@ class MyHomePage extends StatelessWidget {
                 );
               },
             ),
-            //вкладка с завершенными задачами
+            /**
+             * вкладка с завершенными задачами
+             */
             BlocBuilder<CompletedTasksCubit, CompletedTasksState>(
               builder: (context, state) {
-                BlocProvider.of<CompletedTasksCubit>(context).loadTasks();
-
                 if (state.completedTaskList.isNotEmpty) {
                   return ListView.separated(
                     padding: const EdgeInsets.all(8),
@@ -192,7 +213,9 @@ class MyHomePage extends StatelessWidget {
                               ),
                             ),
                           ),
-                          /**Удалить завершенную задачу*/
+                          /**
+                           * Удалить завершенную задачу
+                           */
                           Expanded(
                             child: TextButton(
                               onPressed: () => {
@@ -212,6 +235,7 @@ class MyHomePage extends StatelessWidget {
                         const Divider(),
                   );
                 }
+
                 if (state.isLoading) {
                   return const Center(child: CircularProgressIndicator());
                 }
@@ -235,7 +259,7 @@ class MyHomePage extends StatelessWidget {
           },
           tooltip: 'Добавить задачу',
           child: const Icon(Icons.add),
-        ), // This trailing comma makes auto-formatting nicer for build methods.
+        ),
       ),
     );
   }

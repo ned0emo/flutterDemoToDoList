@@ -5,17 +5,18 @@ import 'package:fluttertest/cubit/active_tasks/active_tasks_repository.dart';
 part 'active_tasks_state.dart';
 
 class ActiveTasksCubit extends Cubit<ActiveTasksState> {
-  ActiveTasksCubit() : super(ActiveTasksState(taskList: [], isLoading: true));
   final storage = const FlutterSecureStorage();
-  final repository = ActiveTasksRepository();
+  final ActiveTasksRepository repository; // = ActiveTasksRepository();
+
+  ActiveTasksCubit({required this.repository})
+      : super(ActiveTasksState(taskList: [], isLoading: true));
 
   Future<void> loadTasks() async {
     final tasks = await repository.loadTasks();
 
     if (tasks != null) {
       emit(ActiveTasksState(taskList: tasks.split('\n'), isLoading: false));
-    }
-    else{
+    } else {
       emit(ActiveTasksState(taskList: [], isLoading: false));
     }
   }
