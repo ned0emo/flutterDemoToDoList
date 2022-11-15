@@ -1,8 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ActiveTasksRepository {
   final storage = const FlutterSecureStorage();
   final storageKey = "activeTasks";
+
+  Future<void> fireStoreInit() async{
+    final fireStorage = FirebaseFirestore.instance;
+    int k = 0;
+  }
 
   Future<String?> loadTasks() => storage.read(key: storageKey);
 

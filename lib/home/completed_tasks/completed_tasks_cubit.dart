@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:fluttertest/cubit/completed_tasks/completed_tasks_repository.dart';
+import 'package:fluttertest/home/completed_tasks/completed_tasks_repository.dart';
 
 part 'completed_tasks_state.dart';
 

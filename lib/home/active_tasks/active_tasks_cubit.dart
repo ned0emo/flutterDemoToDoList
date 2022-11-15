@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:fluttertest/cubit/active_tasks/active_tasks_repository.dart';
+import 'package:fluttertest/home/active_tasks/active_tasks_repository.dart';
 
 part 'active_tasks_state.dart';
 
@@ -13,6 +13,7 @@ class ActiveTasksCubit extends Cubit<ActiveTasksState> {
 
   Future<void> loadTasks() async {
     final tasks = await repository.loadTasks();
+    //await repository.fireStoreInit();
 
     if (tasks != null) {
       emit(ActiveTasksState(taskList: tasks.split('\n'), isLoading: false));
