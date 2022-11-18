@@ -1,8 +1,11 @@
 part of 'active_tasks_cubit.dart';
 
-class ActiveTasksState{
+class ActiveTasksState {
   final List<String> taskList;
-  final bool isLoading;
+  final bool isListLoading;
 
-  ActiveTasksState({required this.taskList, required this.isLoading});
+  ActiveTasksState({
+    required this.taskList,
+    required this.isListLoading,
+  });
 }

@@ -1,20 +1,31 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class ActiveTasksRepository {
-  final storage = const FlutterSecureStorage();
-  final storageKey = "activeTasks";
+  final fireStorage = FirebaseStorage.instance.ref();
+  final String userId;
+  late final Reference activeTasksFile;
 
-  Future<void> fireStoreInit() async{
-    final fireStorage = FirebaseFirestore.instance;
-    int k = 0;
+  ActiveTasksRepository({required this.userId});
+
+  Future<String?> loadTasks() async {
+    activeTasksFile = fireStorage.child('users/$userId/active.txt');
+
+    try {
+      final activeTasksData = await activeTasksFile.getData();
+
+      String? activeTasksText;
+      if (activeTasksData != null) {
+        activeTasksText = String.fromCharCodes(activeTasksData);
+      }
+      return activeTasksText;
+    } catch (e) {
+      return null;
+    }
   }
-
-  Future<String?> loadTasks() => storage.read(key: storageKey);
 
   Future<void> saveTasks({required List<String> taskList}) async {
     if (taskList.isEmpty) {
-      await storage.delete(key: storageKey);
+      await activeTasksFile.delete();
       return;
     }
 
@@ -22,7 +33,6 @@ class ActiveTasksRepository {
     for (int i = 1; i < taskList.length; i++) {
       tasks += '\n${taskList[i]}';
     }
-
-    await storage.write(key: storageKey, value: tasks);
+    await activeTasksFile.putString(tasks);
   }
 }

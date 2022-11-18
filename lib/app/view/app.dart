@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertest/app/app.dart';
 
-import '../../theme.dart';
-
 class App extends StatelessWidget {
   const App(
       {super.key, required AuthenticationRepository authenticationRepository})
@@ -21,21 +19,25 @@ class App extends StatelessWidget {
         create: (_) => AppBloc(
           authenticationRepository: _authenticationRepository,
         ),
-        child: const AppView(),
+        child: AppView(authenticationRepository: _authenticationRepository),
       ),
     );
   }
 }
 
 class AppView extends StatelessWidget {
-  const AppView({super.key});
+  const AppView({super.key, required this.authenticationRepository});
+
+  final AuthenticationRepository authenticationRepository;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: FlowBuilder<AppStatus>(
-          state: context.select((AppBloc bloc) => bloc.state.status),
-          onGeneratePages: onGenerateAppViewPages,
-        ));
+      home: FlowBuilder<AppStatus>(
+        state: context.select((AppBloc bloc) => bloc.state.status),
+        onGeneratePages: (status, pageList) =>
+            onGenerateAppViewPages(status, pageList, authenticationRepository),
+      ),
+    );
   }
 }

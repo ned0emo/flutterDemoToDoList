@@ -26,15 +26,31 @@ class CompletedTasksCubit extends Cubit<CompletedTasksState> {
     final newTaskList = state.completedTaskList;
     newTaskList.add(newTask);
 
-    await repository.saveTasks(taskList: newTaskList);
-    emit(CompletedTasksState(completedTaskList: newTaskList, isLoading: false));
+    emit(CompletedTasksState(
+        completedTaskList: state.completedTaskList, isLoading: true));
+    try {
+      await repository.saveTasks(taskList: newTaskList);
+      emit(CompletedTasksState(
+          completedTaskList: newTaskList, isLoading: false));
+    } catch (e) {
+      emit(CompletedTasksState(
+          completedTaskList: state.completedTaskList, isLoading: false));
+    }
   }
 
   Future<void> removeTask(int index) async {
     final newTaskList = state.completedTaskList;
     newTaskList.removeAt(index);
 
-    await repository.saveTasks(taskList: newTaskList);
-    emit(CompletedTasksState(completedTaskList: newTaskList, isLoading: false));
+    emit(CompletedTasksState(
+        completedTaskList: state.completedTaskList, isLoading: true));
+    try {
+      await repository.saveTasks(taskList: newTaskList);
+      emit(CompletedTasksState(
+          completedTaskList: newTaskList, isLoading: false));
+    } catch (e) {
+      emit(CompletedTasksState(
+          completedTaskList: state.completedTaskList, isLoading: false));
+    }
   }
 }

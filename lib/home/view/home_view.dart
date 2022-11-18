@@ -8,10 +8,11 @@ import '../completed_tasks/completed_tasks_cubit.dart';
 class MyHomeView extends StatelessWidget {
   const MyHomeView({super.key});
 
-  Future<void> showAddTaskDialog(BuildContext taskDialogContext) {
+  Future<void> showAddTaskDialog(BuildContext contextWithActiveTaskCubit) {
     String taskText = '';
+
     return showDialog<void>(
-      context: taskDialogContext,
+      context: contextWithActiveTaskCubit,
       barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -43,7 +44,8 @@ class MyHomeView extends StatelessWidget {
               child: const Text('Добавить'),
               onPressed: () {
                 if (taskText.isNotEmpty) {
-                  BlocProvider.of<ActiveTasksCubit>(taskDialogContext).addTask(taskText);
+                  BlocProvider.of<ActiveTasksCubit>(contextWithActiveTaskCubit)
+                      .addTask(taskText);
                   Navigator.of(context).pop();
                 }
               },
@@ -81,6 +83,10 @@ class MyHomeView extends StatelessWidget {
              */
             BlocBuilder<ActiveTasksCubit, ActiveTasksState>(
               builder: (context, state) {
+                if (state.isListLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
                 if (state.taskList.isNotEmpty) {
                   return ListView.separated(
                     padding: const EdgeInsets.all(8),
@@ -138,10 +144,6 @@ class MyHomeView extends StatelessWidget {
                     separatorBuilder: (BuildContext context, int index) =>
                         const Divider(),
                   );
-                }
-
-                if (state.isLoading) {
-                  return const Center(child: CircularProgressIndicator());
                 }
 
                 return const Center(

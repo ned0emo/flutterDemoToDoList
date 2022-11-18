@@ -8,19 +8,20 @@ import '../completed_tasks/completed_tasks_cubit.dart';
 import '../completed_tasks/completed_tasks_repository.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  const HomePage({super.key, required this.userId});
 
-  static Page<void> page() => const MaterialPage<void>(child: HomePage());
+  final String userId;
+  static Page<void> page(String id) => MaterialPage<void>(child: HomePage(userId: id));
 
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider<ActiveTasksRepository>(
-          create: (context) => ActiveTasksRepository(),
+          create: (context) => ActiveTasksRepository(userId: userId),
         ),
         RepositoryProvider<CompletedTasksRepository>(
-          create: (context) => CompletedTasksRepository(),
+          create: (context) => CompletedTasksRepository(userId: userId),
         ),
       ],
       child: MultiBlocProvider(
