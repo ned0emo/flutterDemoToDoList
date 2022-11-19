@@ -83,72 +83,96 @@ class MyHomeView extends StatelessWidget {
              */
             BlocBuilder<ActiveTasksCubit, ActiveTasksState>(
               builder: (context, state) {
-                if (state.isListLoading) {
+                if (state is ActiveTasksError) {
+                  return const Center(
+                    child: Text(
+                      'Ошибка загрузки списка',
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  );
+                }
+
+                if (state is ActiveTasksLoading) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                if (state.taskList.isNotEmpty) {
-                  return ListView.separated(
-                    padding: const EdgeInsets.all(8),
-                    itemCount: state.taskList.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Row(
-                        children: <Widget>[
-                          /**
-                           * Текст задачи
-                           */
-                          Expanded(
-                            flex: 6,
-                            child: Text(
-                              '${index + 1}. ${state.taskList[index]}',
-                              style: const TextStyle(
-                                fontSize: 18,
+                if (state is ActiveTasksLoaded) {
+                  if (state.taskList.isNotEmpty) {
+                    return ListView.separated(
+                      padding: const EdgeInsets.all(8),
+                      itemCount: state.taskList.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Row(
+                          children: <Widget>[
+                            /**
+                             * Текст задачи
+                             */
+                            Expanded(
+                              flex: 6,
+                              child: Text(
+                                '${index + 1}. ${state.taskList[index]}',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                ),
                               ),
                             ),
-                          ),
-                          /**
-                           * Пометить задачу завершенной
-                           */
-                          Expanded(
-                            child: TextButton(
-                              onPressed: () => {
-                                BlocProvider.of<CompletedTasksCubit>(context)
-                                    .addTask(state.taskList[index]),
-                                BlocProvider.of<ActiveTasksCubit>(context)
-                                    .removeTask(index),
-                              },
-                              child: const Icon(
-                                Icons.check,
-                                color: Colors.green,
+                            /**
+                             * Пометить задачу завершенной
+                             */
+                            Expanded(
+                              child: TextButton(
+                                onPressed: () => {
+                                  BlocProvider.of<CompletedTasksCubit>(context)
+                                      .addTask(state.taskList[index]),
+                                  BlocProvider.of<ActiveTasksCubit>(context)
+                                      .removeTask(index),
+                                },
+                                child: const Icon(
+                                  Icons.check,
+                                  color: Colors.green,
+                                ),
                               ),
                             ),
-                          ),
-                          /**
-                           * Удалить задачу
-                           */
-                          Expanded(
-                            child: TextButton(
-                              onPressed: () => {
-                                BlocProvider.of<ActiveTasksCubit>(context)
-                                    .removeTask(index),
-                              },
-                              child: const Icon(
-                                Icons.delete,
-                                color: Colors.blueGrey,
+                            /**
+                             * Удалить задачу
+                             */
+                            Expanded(
+                              child: TextButton(
+                                onPressed: () => {
+                                  BlocProvider.of<ActiveTasksCubit>(context)
+                                      .removeTask(index),
+                                },
+                                child: const Icon(
+                                  Icons.delete,
+                                  color: Colors.blueGrey,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      );
-                    },
-                    separatorBuilder: (BuildContext context, int index) =>
-                        const Divider(),
+                          ],
+                        );
+                      },
+                      separatorBuilder: (BuildContext context, int index) =>
+                          const Divider(),
+                    );
+                  }
+
+                  return const Center(
+                    child: Text(
+                      'Чтобы добавить задачу, нажмите на кнопку \'+\'',
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   );
                 }
 
                 return const Center(
                   child: Text(
-                    'Чтобы добавить задачу, нажмите на кнопку \'+\'',
+                    'Неизвестная ошибка',
                     style: TextStyle(
                       fontSize: 18,
                     ),
@@ -162,52 +186,76 @@ class MyHomeView extends StatelessWidget {
              */
             BlocBuilder<CompletedTasksCubit, CompletedTasksState>(
               builder: (context, state) {
-                if (state.completedTaskList.isNotEmpty) {
-                  return ListView.separated(
-                    padding: const EdgeInsets.all(8),
-                    itemCount: state.completedTaskList.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Row(
-                        children: <Widget>[
-                          Expanded(
-                            flex: 6,
-                            child: Text(
-                              state.completedTaskList[index],
-                              style: const TextStyle(
-                                fontSize: 18,
-                              ),
-                            ),
-                          ),
-                          /**
-                           * Удалить завершенную задачу
-                           */
-                          Expanded(
-                            child: TextButton(
-                              onPressed: () => {
-                                BlocProvider.of<CompletedTasksCubit>(context)
-                                    .removeTask(index),
-                              },
-                              child: const Icon(
-                                Icons.delete,
-                                color: Colors.blueGrey,
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                    separatorBuilder: (BuildContext context, int index) =>
-                        const Divider(),
+                if (state is CompletedTasksError) {
+                  return const Center(
+                    child: Text(
+                      'Ошибка загрузки списка',
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   );
                 }
 
-                if (state.isLoading) {
+                if (state is CompletedTasksLoading) {
                   return const Center(child: CircularProgressIndicator());
+                }
+
+                if (state is CompletedTasksLoaded) {
+                  if (state.completedTaskList.isNotEmpty) {
+                    return ListView.separated(
+                      padding: const EdgeInsets.all(8),
+                      itemCount: state.completedTaskList.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Row(
+                          children: <Widget>[
+                            Expanded(
+                              flex: 6,
+                              child: Text(
+                                state.completedTaskList[index],
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+                            /**
+                             * Удалить завершенную задачу
+                             */
+                            Expanded(
+                              child: TextButton(
+                                onPressed: () => {
+                                  BlocProvider.of<CompletedTasksCubit>(context)
+                                      .removeTask(index),
+                                },
+                                child: const Icon(
+                                  Icons.delete,
+                                  color: Colors.blueGrey,
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                      separatorBuilder: (BuildContext context, int index) =>
+                          const Divider(),
+                    );
+                  }
+
+                  return const Center(
+                    child: Text(
+                      'Нет завершенных задач',
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  );
                 }
 
                 return const Center(
                   child: Text(
-                    'Нет завершенных задач',
+                    'Неизвестная ошибка',
                     style: TextStyle(
                       fontSize: 18,
                     ),

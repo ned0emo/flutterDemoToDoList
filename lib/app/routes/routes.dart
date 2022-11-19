@@ -8,11 +8,10 @@ import '../../home/view/home_page.dart';
 List<Page<dynamic>> onGenerateAppViewPages(
   AppStatus state,
   List<Page<dynamic>> pages,
-  AuthenticationRepository repo,
 ) {
   switch (state) {
     case AppStatus.authenticated:
-      return [HomePage.page(repo.currentUser.id)];
+      return [HomePage.page()];
     case AppStatus.unauthenticated:
       return [LoginPage.page()];
   }

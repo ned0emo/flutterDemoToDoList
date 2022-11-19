@@ -1,56 +1,70 @@
 import 'package:bloc/bloc.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:fluttertest/home/active_tasks/active_tasks_cubit.dart';
 import 'package:fluttertest/home/completed_tasks/completed_tasks_repository.dart';
 
 part 'completed_tasks_state.dart';
 
 class CompletedTasksCubit extends Cubit<CompletedTasksState> {
-  final storage = const FlutterSecureStorage();
-  final CompletedTasksRepository repository; // = CompletedTasksRepository();
+  final CompletedTasksRepository repository;
 
   CompletedTasksCubit({required this.repository})
-      : super(CompletedTasksState(completedTaskList: [], isLoading: true));
+      : super(CompletedTasksLoading());
 
   Future<void> loadTasks() async {
     final tasks = await repository.loadTasks();
 
     if (tasks != null) {
-      emit(CompletedTasksState(
-          completedTaskList: tasks.split('\n'), isLoading: false));
+      emit(CompletedTasksLoaded(
+          completedTaskList: tasks.isNotEmpty ? tasks.split('\n') : []));
     } else {
-      emit(CompletedTasksState(completedTaskList: [], isLoading: false));
+      emit(CompletedTasksError());
     }
   }
 
   Future<void> addTask(String newTask) async {
-    final newTaskList = state.completedTaskList;
-    newTaskList.add(newTask);
+    CompletedTasksState state = this.state;
 
-    emit(CompletedTasksState(
-        completedTaskList: state.completedTaskList, isLoading: true));
-    try {
-      await repository.saveTasks(taskList: newTaskList);
-      emit(CompletedTasksState(
-          completedTaskList: newTaskList, isLoading: false));
-    } catch (e) {
-      emit(CompletedTasksState(
-          completedTaskList: state.completedTaskList, isLoading: false));
+    if (state is CompletedTasksError) {
+      emit(CompletedTasksLoading());
+      final tasks = await repository.loadTasks();
+
+      if (tasks != null) {
+        emit(CompletedTasksLoaded(completedTaskList: tasks.split('\n')));
+      } else {
+        emit(CompletedTasksError());
+        return;
+      }
+    }
+
+    state = this.state;
+    if (state is CompletedTasksLoaded) {
+      final newTaskList = state.completedTaskList;
+      newTaskList.add(newTask);
+
+      emit(CompletedTasksLoading());
+      try {
+        await repository.saveTasks(taskList: newTaskList);
+        emit(CompletedTasksLoaded(completedTaskList: newTaskList));
+      } catch (e) {
+        emit(CompletedTasksError());
+      }
     }
   }
 
   Future<void> removeTask(int index) async {
-    final newTaskList = state.completedTaskList;
-    newTaskList.removeAt(index);
+    final state = this.state;
 
-    emit(CompletedTasksState(
-        completedTaskList: state.completedTaskList, isLoading: true));
-    try {
-      await repository.saveTasks(taskList: newTaskList);
-      emit(CompletedTasksState(
-          completedTaskList: newTaskList, isLoading: false));
-    } catch (e) {
-      emit(CompletedTasksState(
-          completedTaskList: state.completedTaskList, isLoading: false));
+    if (state is CompletedTasksLoaded) {
+      final newTaskList = state.completedTaskList;
+      newTaskList.removeAt(index);
+
+      emit(CompletedTasksLoading());
+      try {
+        await repository.saveTasks(taskList: newTaskList);
+        emit(CompletedTasksLoaded(completedTaskList: newTaskList));
+      } catch (e) {
+        emit(CompletedTasksError());
+      }
     }
   }
 }

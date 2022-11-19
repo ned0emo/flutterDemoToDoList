@@ -19,7 +19,7 @@ class ActiveTasksRepository {
       }
       return activeTasksText;
     } catch (e) {
-      return null;
+      return '';
     }
   }
 

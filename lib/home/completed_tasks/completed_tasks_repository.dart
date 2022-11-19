@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_storage/firebase_storage.dart';
 
 class CompletedTasksRepository {
@@ -19,7 +21,7 @@ class CompletedTasksRepository {
       }
       return completedTasksText;
     } catch (e) {
-      return null;
+      return '';
     }
   }
 
@@ -33,6 +35,7 @@ class CompletedTasksRepository {
     for (int i = 1; i < taskList.length; i++) {
       tasks += '\n${taskList[i]}';
     }
+
     await completedTasksFile.putString(tasks);
   }
 }

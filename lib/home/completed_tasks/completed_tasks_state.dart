@@ -1,8 +1,15 @@
 part of 'completed_tasks_cubit.dart';
 
-class CompletedTasksState {
-  final List<String> completedTaskList;
-  final bool isLoading;
+abstract class CompletedTasksState {}
 
-  CompletedTasksState({required this.completedTaskList, required this.isLoading});
+class CompletedTasksLoading extends CompletedTasksState {}
+
+class CompletedTasksLoaded extends CompletedTasksState {
+  final List<String> completedTaskList;
+
+  CompletedTasksLoaded({
+    required this.completedTaskList,
+  });
 }
+
+class CompletedTasksError extends CompletedTasksState {}

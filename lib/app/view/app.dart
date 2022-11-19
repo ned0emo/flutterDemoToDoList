@@ -35,8 +35,7 @@ class AppView extends StatelessWidget {
     return MaterialApp(
       home: FlowBuilder<AppStatus>(
         state: context.select((AppBloc bloc) => bloc.state.status),
-        onGeneratePages: (status, pageList) =>
-            onGenerateAppViewPages(status, pageList, authenticationRepository),
+        onGeneratePages: onGenerateAppViewPages,
       ),
     );
   }
