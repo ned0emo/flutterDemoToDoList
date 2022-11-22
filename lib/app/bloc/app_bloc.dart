@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertest/app/bloc/theme_repository.dart';
 
 part 'app_event.dart';
 
@@ -10,9 +12,13 @@ part 'app_state.dart';
 
 class AppBloc extends Bloc<AppEvent, AppState> {
   final AuthenticationRepository _authenticationRepository;
+  final ThemeRepository themeRepository;
   late final StreamSubscription<User> _userSubscription;
+  late final ThemeData theme;
 
-  AppBloc({required AuthenticationRepository authenticationRepository})
+  AppBloc(
+      {required AuthenticationRepository authenticationRepository,
+      required this.themeRepository})
       : _authenticationRepository = authenticationRepository,
         super(
           authenticationRepository.currentUser.isNotEmpty
@@ -36,6 +42,31 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   void _onLogoutRequested(AppLogoutRequested event, Emitter<AppState> emit) {
     unawaited(_authenticationRepository.logOut());
+  }
+
+  Future<void> changeTheme() async {
+    await themeRepository.saveTheme();
+    loadTheme();
+  }
+
+  void loadTheme() {
+    if (themeRepository.themeType == 'light') {
+      theme = ThemeData(
+        primaryColorDark: Colors.deepPurple,
+        primaryColorLight: Colors.deepPurpleAccent,
+        primaryColor: Colors.pink,
+        colorScheme: const ColorScheme.light(secondary: Colors.pinkAccent),
+        scaffoldBackgroundColor: Colors.white,
+      );
+    } else {
+      theme = ThemeData(
+        primaryColorDark: Colors.deepPurple,
+        primaryColorLight: Colors.deepPurpleAccent,
+        primaryColor: Colors.purple,
+        colorScheme: const ColorScheme.dark(secondary: Colors.purpleAccent),
+        scaffoldBackgroundColor: Colors.black54,
+      );
+    }
   }
 
   @override

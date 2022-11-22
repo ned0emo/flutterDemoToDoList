@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:formz/formz.dart';
 
 import '../../register/view/register_page.dart';
@@ -32,6 +33,8 @@ class LoginForm extends StatelessWidget {
             _PasswordInput(),
             const SizedBox(height: 8),
             _LoginButton(),
+            const SizedBox(height: 8),
+            _GoogleLoginButton(),
             const SizedBox(height: 4),
             _SignUpButton(),
           ],
@@ -95,7 +98,7 @@ class _LoginButton extends StatelessWidget {
             : ElevatedButton(
                 key: const Key('loginForm_continue_raisedButton'),
                 onPressed: state.status.isValidated
-                    ? () => context.read<LoginCubit>().login()
+                    ? () => context.read<LoginCubit>().loginWithEmail()
                     : null,
                 child: const Text('ВХОД'),
               );
@@ -115,6 +118,20 @@ class _SignUpButton extends StatelessWidget {
         'СОЗДАТЬ АККАУНТ',
         style: TextStyle(color: theme.primaryColor),
       ),
+    );
+  }
+}
+
+class _GoogleLoginButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton.icon(
+      key: const Key('loginForm_googleLogin_raisedButton'),
+      label: const Text(
+        'ВХОД С ПОМОЩЬЮ GOOGLE',
+      ),
+      icon: const Icon(FontAwesomeIcons.google),
+      onPressed: () => context.read<LoginCubit>().loginWithGoogle(),
     );
   }
 }

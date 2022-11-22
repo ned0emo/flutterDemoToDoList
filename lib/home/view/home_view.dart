@@ -4,7 +4,6 @@ import 'package:fluttertest/app/app.dart';
 import 'package:fluttertest/home/view/completed_tasks_tab_view.dart';
 
 import '../active_tasks/active_tasks_cubit.dart';
-import '../completed_tasks/completed_tasks_cubit.dart';
 import 'active_tasks_tab_view.dart';
 
 class MyHomeView extends StatelessWidget {
@@ -66,6 +65,20 @@ class MyHomeView extends StatelessWidget {
         appBar: AppBar(
           title: const Text('Список задач'),
           actions: <Widget>[
+            IconButton(
+              onPressed: () {
+                context.read<AppBloc>().changeTheme();
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    const SnackBar(
+                      content:
+                          Text('Для изменения темы перезагрузите приложение'),
+                    ),
+                  );
+              },
+              icon: const Icon(Icons.light_mode),
+            ),
             IconButton(
               key: const Key('homePage_logout_iconButton'),
               icon: const Icon(Icons.logout),

@@ -1,11 +1,10 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../active_tasks/active_tasks_cubit.dart';
 import '../completed_tasks/completed_tasks_cubit.dart';
 
-class ActiveTasksTabView extends StatelessWidget{
+class ActiveTasksTabView extends StatelessWidget {
   const ActiveTasksTabView({super.key});
 
   @override
@@ -36,9 +35,7 @@ class ActiveTasksTabView extends StatelessWidget{
               itemBuilder: (BuildContext context, int index) {
                 return Row(
                   children: <Widget>[
-                    /**
-                     * Текст задачи
-                     */
+                    ///текст задачи
                     Expanded(
                       flex: 6,
                       child: Text(
@@ -48,9 +45,7 @@ class ActiveTasksTabView extends StatelessWidget{
                         ),
                       ),
                     ),
-                    /**
-                     * Пометить задачу завершенной
-                     */
+                    /// Пометить задачу завершенной
                     Expanded(
                       child: TextButton(
                         onPressed: () => {
@@ -65,9 +60,7 @@ class ActiveTasksTabView extends StatelessWidget{
                         ),
                       ),
                     ),
-                    /**
-                     * Удалить задачу
-                     */
+                    ///Удалить задачу
                     Expanded(
                       child: TextButton(
                         onPressed: () => {
@@ -84,7 +77,7 @@ class ActiveTasksTabView extends StatelessWidget{
                 );
               },
               separatorBuilder: (BuildContext context, int index) =>
-              const Divider(),
+                  const Divider(),
             );
           }
 
@@ -111,5 +104,4 @@ class ActiveTasksTabView extends StatelessWidget{
       },
     );
   }
-
 }
