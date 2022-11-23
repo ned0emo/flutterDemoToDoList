@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertest/app/app.dart';
 import 'package:fluttertest/home/view/completed_tasks_tab_view.dart';
 
+import '../../app/bloc/lang_theme_repository.dart';
+import '../../language.dart';
 import '../active_tasks/active_tasks_cubit.dart';
 import 'active_tasks_tab_view.dart';
 
@@ -17,11 +19,11 @@ class MyHomeView extends StatelessWidget {
       barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Добавить задачу'),
+          title: Text(appLanguage.addTask),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                const Text('Введите текст задачи:'),
+                Text(appLanguage.inputTaskText),
                 TextField(
                   controller: TextEditingController(),
                   decoration: const InputDecoration(
@@ -36,13 +38,13 @@ class MyHomeView extends StatelessWidget {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Отмена'),
+              child: Text(appLanguage.cancel),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text('Добавить'),
+              child: Text(appLanguage.add),
               onPressed: () {
                 if (taskText.isNotEmpty) {
                   BlocProvider.of<ActiveTasksCubit>(contextWithActiveTaskCubit)
@@ -63,32 +65,47 @@ class MyHomeView extends StatelessWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Список задач'),
+          title: Text(appLanguage.toDoList),
           actions: <Widget>[
+            IconButton(
+              onPressed: () {
+                context.read<AppBloc>().changeLanguage();
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    SnackBar(
+                      content: Text(appLanguage.changeLanguageNotify),
+                    ),
+                  );
+              },
+              icon: const Icon(Icons.language),
+            ),
             IconButton(
               onPressed: () {
                 context.read<AppBloc>().changeTheme();
                 ScaffoldMessenger.of(context)
                   ..hideCurrentSnackBar()
                   ..showSnackBar(
-                    const SnackBar(
-                      content:
-                          Text('Для изменения темы перезагрузите приложение'),
+                    SnackBar(
+                      content: Text(appLanguage.changeThemeNotify),
                     ),
                   );
               },
-              icon: const Icon(Icons.light_mode),
+              icon: Icon(RepositoryProvider.of<LanguageThemeRepository>(context)
+                          .themeType ==
+                      'dark'
+                  ? Icons.light_mode
+                  : Icons.dark_mode),
             ),
             IconButton(
-              key: const Key('homePage_logout_iconButton'),
               icon: const Icon(Icons.logout),
               onPressed: () =>
                   context.read<AppBloc>().add(AppLogoutRequested()),
             )
           ],
-          bottom: const TabBar(tabs: <Widget>[
-            Tab(text: 'В процессе'),
-            Tab(text: 'Завершенные'),
+          bottom: TabBar(tabs: <Widget>[
+            Tab(text: appLanguage.inProcess),
+            Tab(text: appLanguage.completed),
           ]),
         ),
         body: const TabBarView(
@@ -104,7 +121,7 @@ class MyHomeView extends StatelessWidget {
           onPressed: () {
             showAddTaskDialog(context);
           },
-          tooltip: 'Добавить задачу',
+          tooltip: appLanguage.addTask,
           child: const Icon(Icons.add),
         ),
       ),

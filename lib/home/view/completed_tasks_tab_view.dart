@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../language.dart';
 import '../completed_tasks/completed_tasks_cubit.dart';
 
 class CompletedTasksTabView extends StatelessWidget{
@@ -11,10 +12,10 @@ class CompletedTasksTabView extends StatelessWidget{
     return BlocBuilder<CompletedTasksCubit, CompletedTasksState>(
       builder: (context, state) {
         if (state is CompletedTasksError) {
-          return const Center(
+          return Center(
             child: Text(
-              'Ошибка загрузки списка',
-              style: TextStyle(
+              appLanguage.listLoadError,
+              style: const TextStyle(
                 fontSize: 18,
               ),
               textAlign: TextAlign.center,
@@ -43,9 +44,7 @@ class CompletedTasksTabView extends StatelessWidget{
                         ),
                       ),
                     ),
-                    /**
-                     * Удалить завершенную задачу
-                     */
+                    ///Удалить завершенную задачу
                     Expanded(
                       child: TextButton(
                         onPressed: () => {
@@ -66,10 +65,10 @@ class CompletedTasksTabView extends StatelessWidget{
             );
           }
 
-          return const Center(
+          return Center(
             child: Text(
-              'Нет завершенных задач',
-              style: TextStyle(
+              appLanguage.completedTaskIsEmpty,
+              style: const TextStyle(
                 fontSize: 18,
               ),
               textAlign: TextAlign.center,
@@ -77,10 +76,10 @@ class CompletedTasksTabView extends StatelessWidget{
           );
         }
 
-        return const Center(
+        return Center(
           child: Text(
-            'Неизвестная ошибка',
-            style: TextStyle(
+            appLanguage.unknownError,
+            style: const TextStyle(
               fontSize: 18,
             ),
             textAlign: TextAlign.center,

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:formz/formz.dart';
 
+import '../../language.dart';
 import '../../register/view/register_page.dart';
 import '../cubit/login_cubit.dart';
 
@@ -11,6 +12,7 @@ class LoginForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return BlocListener<LoginCubit, LoginState>(
       listener: (context, state) {
         if (state.status.isSubmissionFailure) {
@@ -18,7 +20,7 @@ class LoginForm extends StatelessWidget {
             ..hideCurrentSnackBar()
             ..showSnackBar(
               SnackBar(
-                  content: Text(state.errorMessage ?? "Ошибка аутентификации")),
+                  content: Text(state.errorMessage ?? appLanguage.authenticationError)),
             );
         }
       },
@@ -51,13 +53,12 @@ class _EmailInput extends StatelessWidget {
       buildWhen: (previous, current) => previous.email != current.email,
       builder: (context, state) {
         return TextField(
-          key: const Key('loginForm_emailInput_textField'),
           onChanged: (email) => context.read<LoginCubit>().emailChanged(email),
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
-            labelText: 'email',
+            labelText: appLanguage.email,
             helperText: '',
-            errorText: state.email.invalid ? 'неправильный адрес электронной почты' : null,
+            errorText: state.email.invalid ? appLanguage.wrongEmail : null,
           ),
         );
       },
@@ -72,14 +73,13 @@ class _PasswordInput extends StatelessWidget {
       buildWhen: (previous, current) => previous.password != current.password,
       builder: (context, state) {
         return TextField(
-          key: const Key('loginForm_passwordInput_textField'),
           onChanged: (password) =>
               context.read<LoginCubit>().passwordChanged(password),
           obscureText: true,
           decoration: InputDecoration(
-            labelText: 'пароль',
+            labelText: appLanguage.password,
             helperText: '',
-            errorText: state.password.invalid ? 'неверный пароль' : null,
+            errorText: state.password.invalid ? appLanguage.wrongPassword : null,
           ),
         );
       },
@@ -96,11 +96,10 @@ class _LoginButton extends StatelessWidget {
         return state.status.isSubmissionInProgress
             ? const CircularProgressIndicator()
             : ElevatedButton(
-                key: const Key('loginForm_continue_raisedButton'),
                 onPressed: state.status.isValidated
                     ? () => context.read<LoginCubit>().loginWithEmail()
                     : null,
-                child: const Text('ВХОД'),
+                child: Text(appLanguage.login.toUpperCase()),
               );
       },
     );
@@ -112,10 +111,9 @@ class _SignUpButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return TextButton(
-      key: const Key('loginForm_createAccount_flatButton'),
       onPressed: () => Navigator.of(context).push<void>(RegisterPage.route()),
       child: Text(
-        'СОЗДАТЬ АККАУНТ',
+        appLanguage.createAccountCapital,
         style: TextStyle(color: theme.primaryColor),
       ),
     );
@@ -126,9 +124,8 @@ class _GoogleLoginButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton.icon(
-      key: const Key('loginForm_googleLogin_raisedButton'),
-      label: const Text(
-        'ВХОД С ПОМОЩЬЮ GOOGLE',
+      label: Text(
+        appLanguage.googleLogin,
       ),
       icon: const Icon(FontAwesomeIcons.google),
       onPressed: () => context.read<LoginCubit>().loginWithGoogle(),

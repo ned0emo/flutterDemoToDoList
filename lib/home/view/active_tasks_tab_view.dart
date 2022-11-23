@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../language.dart';
 import '../active_tasks/active_tasks_cubit.dart';
 import '../completed_tasks/completed_tasks_cubit.dart';
 
@@ -12,10 +13,10 @@ class ActiveTasksTabView extends StatelessWidget {
     return BlocBuilder<ActiveTasksCubit, ActiveTasksState>(
       builder: (context, state) {
         if (state is ActiveTasksError) {
-          return const Center(
+          return Center(
             child: Text(
-              'Ошибка загрузки списка',
-              style: TextStyle(
+              appLanguage.listLoadError,
+              style: const TextStyle(
                 fontSize: 18,
               ),
               textAlign: TextAlign.center,
@@ -81,10 +82,10 @@ class ActiveTasksTabView extends StatelessWidget {
             );
           }
 
-          return const Center(
+          return Center(
             child: Text(
-              'Чтобы добавить задачу, нажмите на кнопку \'+\'',
-              style: TextStyle(
+              appLanguage.addTaskTip,
+              style: const TextStyle(
                 fontSize: 18,
               ),
               textAlign: TextAlign.center,
@@ -92,10 +93,10 @@ class ActiveTasksTabView extends StatelessWidget {
           );
         }
 
-        return const Center(
+        return Center(
           child: Text(
-            'Неизвестная ошибка',
-            style: TextStyle(
+            appLanguage.unknownError,
+            style: const TextStyle(
               fontSize: 18,
             ),
             textAlign: TextAlign.center,

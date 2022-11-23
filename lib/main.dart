@@ -4,7 +4,7 @@ import 'app/app.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:authentication_repository/authentication_repository.dart';
 
-import 'app/bloc/theme_repository.dart';
+import 'app/bloc/lang_theme_repository.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,11 +15,12 @@ Future<void> main() async {
   final authenticationRepository = AuthenticationRepository();
   await authenticationRepository.user.first;
 
-  final themeRepository = ThemeRepository();
-  await themeRepository.loadTheme();
+  final languageThemeRepository = LanguageThemeRepository();
+  await languageThemeRepository.loadTheme();
+  await languageThemeRepository.loadLanguage();
 
   runApp(App(
     authenticationRepository: authenticationRepository,
-    themeRepository: themeRepository,
+    languageThemeRepository: languageThemeRepository,
   ));
 }

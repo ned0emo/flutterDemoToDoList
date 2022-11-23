@@ -4,7 +4,9 @@ import 'package:authentication_repository/authentication_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertest/app/bloc/theme_repository.dart';
+import 'package:fluttertest/app/bloc/lang_theme_repository.dart';
+
+import '../../language.dart';
 
 part 'app_event.dart';
 
@@ -12,13 +14,13 @@ part 'app_state.dart';
 
 class AppBloc extends Bloc<AppEvent, AppState> {
   final AuthenticationRepository _authenticationRepository;
-  final ThemeRepository themeRepository;
+  final LanguageThemeRepository languageThemeRepository;
   late final StreamSubscription<User> _userSubscription;
   late final ThemeData theme;
 
   AppBloc(
       {required AuthenticationRepository authenticationRepository,
-      required this.themeRepository})
+      required this.languageThemeRepository})
       : _authenticationRepository = authenticationRepository,
         super(
           authenticationRepository.currentUser.isNotEmpty
@@ -45,12 +47,12 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   Future<void> changeTheme() async {
-    await themeRepository.saveTheme();
-    loadTheme();
+    await languageThemeRepository.saveTheme();
+    //loadTheme();
   }
 
   void loadTheme() {
-    if (themeRepository.themeType == 'light') {
+    if (languageThemeRepository.themeType == 'light') {
       theme = ThemeData(
         primaryColorDark: Colors.deepPurple,
         primaryColorLight: Colors.deepPurpleAccent,
@@ -66,6 +68,18 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         colorScheme: const ColorScheme.dark(secondary: Colors.purpleAccent),
         scaffoldBackgroundColor: Colors.black54,
       );
+    }
+  }
+
+  Future<void> changeLanguage() async {
+    await languageThemeRepository.saveLanguage();
+  }
+
+  void loadLanguage() {
+    if (languageThemeRepository.languageType == 'ru') {
+      appLanguage = AppLanguage(language: 'ru');
+    } else {
+      appLanguage = AppLanguage(language: 'en');
     }
   }
 

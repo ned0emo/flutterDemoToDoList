@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertest/register/view/register_form.dart';
 
+import '../../language.dart';
 import '../cubit/register_cubit.dart';
 
 class RegisterPage extends StatelessWidget{
@@ -15,7 +16,7 @@ class RegisterPage extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Регистрация')),
+      appBar: AppBar(title: Text(appLanguage.register)),
       body: Padding(
         padding: const EdgeInsets.all(8),
         child: BlocProvider<RegisterCubit>(
