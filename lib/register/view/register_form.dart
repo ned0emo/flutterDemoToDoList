@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertest/language.dart';
 import 'package:fluttertest/register/cubit/register_cubit.dart';
 import 'package:formz/formz.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RegisterForm extends StatelessWidget {
   const RegisterForm({super.key});
@@ -18,7 +18,7 @@ class RegisterForm extends StatelessWidget {
             ..hideCurrentSnackBar()
             ..showSnackBar(
               SnackBar(
-                content: Text(state.errorMessage ?? appLanguage.registerError),
+                content: Text(state.errorMessage ?? AppLocalizations.of(context)!.registerError),
               ),
             );
         }
@@ -53,9 +53,9 @@ class _EmailInput extends StatelessWidget {
               context.read<RegisterCubit>().emailChanged(email),
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
-            labelText: appLanguage.email,
+            labelText: AppLocalizations.of(context)!.email,
             helperText: '',
-            errorText: state.email.invalid ? appLanguage.wrongEmail : null,
+            errorText: state.email.invalid ? AppLocalizations.of(context)!.wrongEmail : null,
           ),
         );
       },
@@ -74,9 +74,9 @@ class _PasswordInput extends StatelessWidget {
               context.read<RegisterCubit>().passwordChanged(password),
           obscureText: true,
           decoration: InputDecoration(
-            labelText: appLanguage.password,
+            labelText: AppLocalizations.of(context)!.password,
             helperText: '',
-            errorText: state.password.invalid ? appLanguage.wrongPassword : null,
+            errorText: state.password.invalid ? AppLocalizations.of(context)!.wrongPassword : null,
           ),
         );
       },
@@ -98,10 +98,10 @@ class _ConfirmPasswordInput extends StatelessWidget {
               .confirmedPasswordChanged(confirmPassword),
           obscureText: true,
           decoration: InputDecoration(
-            labelText: appLanguage.passwordConfirm,
+            labelText: AppLocalizations.of(context)!.passwordConfirm,
             helperText: '',
             errorText: state.confirmedPassword.invalid
-                ? appLanguage.passwordNotEqual
+                ? AppLocalizations.of(context)!.passwordNotEqual
                 : null,
           ),
         );
@@ -123,7 +123,7 @@ class _RegisterButton extends StatelessWidget {
                     ? () =>
                         context.read<RegisterCubit>().registerFormSubmitted()
                     : null,
-                child: Text(appLanguage.register.toUpperCase()),
+                child: Text(AppLocalizations.of(context)!.register.toUpperCase()),
               );
       },
     );

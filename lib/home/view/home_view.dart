@@ -1,59 +1,67 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertest/app/app.dart';
+import 'package:fluttertest/app/language_bloc/language_cubit.dart';
+import 'package:fluttertest/app/theme_bloc/theme_cubit.dart';
 import 'package:fluttertest/home/view/completed_tasks_tab_view.dart';
 
-import '../../app/bloc/lang_theme_repository.dart';
-import '../../language.dart';
 import '../active_tasks/active_tasks_cubit.dart';
 import 'active_tasks_tab_view.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MyHomeView extends StatelessWidget {
   const MyHomeView({super.key});
 
-  Future<void> showAddTaskDialog(BuildContext contextWithActiveTaskCubit) {
+  Future<void> showAddTaskDialog(BuildContext mainContext) {
     String taskText = '';
 
     return showDialog<void>(
-      context: contextWithActiveTaskCubit,
+      context: mainContext,
       barrierDismissible: true,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(appLanguage.addTask),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(appLanguage.inputTaskText),
-                TextField(
-                  controller: TextEditingController(),
-                  decoration: const InputDecoration(
-                    border: UnderlineInputBorder(),
+        return BlocBuilder<LanguageCubit, LanguageState>(
+          builder: (context, state) {
+            return Localizations.override(
+                context: context,
+                locale: Locale(state.language),
+                child: AlertDialog(
+                  title: Text(AppLocalizations.of(mainContext)!.addTask),
+                  content: SingleChildScrollView(
+                    child: ListBody(
+                      children: <Widget>[
+                        Text(AppLocalizations.of(mainContext)!.inputTaskText),
+                        TextField(
+                          controller: TextEditingController(),
+                          decoration: const InputDecoration(
+                            border: UnderlineInputBorder(),
+                          ),
+                          onChanged: (String value) {
+                            taskText = value;
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                  onChanged: (String value) {
-                    taskText = value;
-                  },
-                ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text(appLanguage.cancel),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text(appLanguage.add),
-              onPressed: () {
-                if (taskText.isNotEmpty) {
-                  BlocProvider.of<ActiveTasksCubit>(contextWithActiveTaskCubit)
-                      .addTask(taskText);
-                  Navigator.of(context).pop();
-                }
-              },
-            ),
-          ],
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text(AppLocalizations.of(mainContext)!.cancel),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    TextButton(
+                      child: Text(AppLocalizations.of(mainContext)!.add),
+                      onPressed: () {
+                        if (taskText.isNotEmpty) {
+                          BlocProvider.of<ActiveTasksCubit>(mainContext)
+                              .addTask(taskText);
+                          Navigator.of(context).pop();
+                        }
+                      },
+                    ),
+                  ],
+                ));
+          },
         );
       },
     );
@@ -65,38 +73,23 @@ class MyHomeView extends StatelessWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(appLanguage.toDoList),
+          title: Text(AppLocalizations.of(context)!.toDoList),
           actions: <Widget>[
             IconButton(
               onPressed: () {
-                context.read<AppBloc>().changeLanguage();
-                ScaffoldMessenger.of(context)
-                  ..hideCurrentSnackBar()
-                  ..showSnackBar(
-                    SnackBar(
-                      content: Text(appLanguage.changeLanguageNotify),
-                    ),
-                  );
+                context.read<LanguageCubit>().changeLanguage();
               },
               icon: const Icon(Icons.language),
             ),
-            IconButton(
-              onPressed: () {
-                context.read<AppBloc>().changeTheme();
-                ScaffoldMessenger.of(context)
-                  ..hideCurrentSnackBar()
-                  ..showSnackBar(
-                    SnackBar(
-                      content: Text(appLanguage.changeThemeNotify),
-                    ),
-                  );
-              },
-              icon: Icon(RepositoryProvider.of<LanguageThemeRepository>(context)
-                          .themeType ==
-                      'dark'
-                  ? Icons.light_mode
-                  : Icons.dark_mode),
-            ),
+            BlocBuilder<ThemeCubit, ThemeState>(builder: (context, state) {
+              return IconButton(
+                onPressed: () {
+                  context.read<ThemeCubit>().changeTheme();
+                },
+                icon: Icon(
+                    state is ThemeDark ? Icons.light_mode : Icons.dark_mode),
+              );
+            }),
             IconButton(
               icon: const Icon(Icons.logout),
               onPressed: () =>
@@ -104,8 +97,8 @@ class MyHomeView extends StatelessWidget {
             )
           ],
           bottom: TabBar(tabs: <Widget>[
-            Tab(text: appLanguage.inProcess),
-            Tab(text: appLanguage.completed),
+            Tab(text: AppLocalizations.of(context)!.inProcess),
+            Tab(text: AppLocalizations.of(context)!.completed),
           ]),
         ),
         body: const TabBarView(
@@ -121,7 +114,7 @@ class MyHomeView extends StatelessWidget {
           onPressed: () {
             showAddTaskDialog(context);
           },
-          tooltip: appLanguage.addTask,
+          tooltip: AppLocalizations.of(context)!.addTask,
           child: const Icon(Icons.add),
         ),
       ),

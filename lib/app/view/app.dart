@@ -3,30 +3,45 @@ import 'package:flow_builder/flow_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertest/app/app.dart';
-import 'package:fluttertest/app/bloc/lang_theme_repository.dart';
+import 'package:fluttertest/app/language_bloc/language_cubit.dart';
+import 'package:fluttertest/app/language_bloc/language_repository.dart';
+import 'package:fluttertest/app/theme_bloc/theme_cubit.dart';
+import 'package:fluttertest/app/theme_bloc/theme_repository.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class App extends StatelessWidget {
-  const App(
-      {super.key,
-      required AuthenticationRepository authenticationRepository,
-      required this.languageThemeRepository})
-      : _authenticationRepository = authenticationRepository;
+  const App({
+    super.key,
+    required this.authenticationRepository,
+    required this.themeRepository,
+    required this.languageRepository,
+  });
 
-  final AuthenticationRepository _authenticationRepository;
-  final LanguageThemeRepository languageThemeRepository;
+  final AuthenticationRepository authenticationRepository;
+  final ThemeRepository themeRepository;
+  final LanguageRepository languageRepository;
 
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider(create: (context) => _authenticationRepository),
-        RepositoryProvider(create: (context) => languageThemeRepository),
+        RepositoryProvider(create: (context) => authenticationRepository),
+        RepositoryProvider(create: (context) => themeRepository),
+        RepositoryProvider(create: (context) => languageRepository),
       ],
-      child: BlocProvider(
-        create: (_) => AppBloc(
-          authenticationRepository: _authenticationRepository,
-          languageThemeRepository: languageThemeRepository,
-        )..loadTheme(),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+              create: (context) =>
+                  AppBloc(authenticationRepository: authenticationRepository)),
+          BlocProvider(
+              create: (context) =>
+                  ThemeCubit(themeRepository: themeRepository)..loadTheme()),
+          BlocProvider(
+              create: (context) =>
+                  LanguageCubit(languageRepository: languageRepository)
+                    ..loadLanguage())
+        ],
         child: const AppView(),
       ),
     );
@@ -38,12 +53,19 @@ class AppView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: BlocProvider.of<AppBloc>(context).theme,
-      home: FlowBuilder<AppStatus>(
-        state: context.select((AppBloc bloc) => bloc.state.status),
-        onGeneratePages: onGenerateAppViewPages,
-      ),
-    );
+    return BlocBuilder<ThemeCubit, ThemeState>(builder: (context, state) {
+      return MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: const [
+          Locale('ru'),
+          Locale('en'),
+        ],
+        theme: state.theme,
+        home: FlowBuilder<AppStatus>(
+          state: context.select((AppBloc bloc) => bloc.state.status),
+          onGeneratePages: onGenerateAppViewPages,
+        ),
+      );
+    });
   }
 }

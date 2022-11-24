@@ -4,9 +4,6 @@ import 'package:authentication_repository/authentication_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertest/app/bloc/lang_theme_repository.dart';
-
-import '../../language.dart';
 
 part 'app_event.dart';
 
@@ -14,13 +11,11 @@ part 'app_state.dart';
 
 class AppBloc extends Bloc<AppEvent, AppState> {
   final AuthenticationRepository _authenticationRepository;
-  final LanguageThemeRepository languageThemeRepository;
   late final StreamSubscription<User> _userSubscription;
   late final ThemeData theme;
 
   AppBloc(
-      {required AuthenticationRepository authenticationRepository,
-      required this.languageThemeRepository})
+      {required AuthenticationRepository authenticationRepository})
       : _authenticationRepository = authenticationRepository,
         super(
           authenticationRepository.currentUser.isNotEmpty
@@ -45,7 +40,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   void _onLogoutRequested(AppLogoutRequested event, Emitter<AppState> emit) {
     unawaited(_authenticationRepository.logOut());
   }
-
+/*
   Future<void> changeTheme() async {
     await languageThemeRepository.saveTheme();
     //loadTheme();
@@ -82,7 +77,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       appLanguage = AppLanguage(language: 'en');
     }
   }
-
+*/
   @override
   Future<void> close() {
     _userSubscription.cancel();

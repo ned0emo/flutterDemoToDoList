@@ -1,0 +1,30 @@
+{
+    "wrongEmail": "неправильный формат электронной почты",
+    "wrongPassword": "неправильный формат пароля",
+    "password": "пароль",
+
+    "addTask": "Добавить задачу",
+    "inputTaskText": "Введите текст задачи",
+    "cancel": "Отмена",
+    "add": "Добавить",
+    "toDoList": "Список задач",
+    "inProcess": "В процессе",
+    "completed": "Завершенные",
+
+    "login": "Вход",
+    "authenticationError": "Ошибка аутентификации",
+    "loginCapital": "ВХОД",
+    "createAccountCapital": "СОЗДАТЬ АККАУНТ",
+    "googleLogin": "ВХОД ЧЕРЕЗ GOOGLE",
+
+    "registerError": "Ошибка регистрации",
+    "passwordConfirm": "подтвердите пароль",
+    "passwordNotEqual": "пароли не совпадают",
+    "registerCapital": "РЕГИСТРАЦИЯ",
+    "register": "Регистрация",
+
+    "listLoadError": "Ошибка загрузки списка",
+    "addTaskTip": "Чтобы добавить задачу, нажмите на кнопку \"+\"",
+    "unknownError": "Неизвестная ошибка",
+    "completedTaskIsEmpty": "Нет завершенных задач"
+}

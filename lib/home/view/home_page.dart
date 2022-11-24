@@ -1,6 +1,7 @@
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertest/app/language_bloc/language_cubit.dart';
 import 'package:fluttertest/home/view/home_view.dart';
 
 import '../active_tasks/active_tasks_cubit.dart';
@@ -11,12 +12,12 @@ import '../completed_tasks/completed_tasks_repository.dart';
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  static Page<void> page() =>
-      const MaterialPage<void>(child: HomePage());
+  static Page<void> page() => const MaterialPage<void>(child: HomePage());
 
   @override
   Widget build(BuildContext context) {
-    final String userId = context.read<AuthenticationRepository>().currentUser.id;
+    final String userId =
+        context.read<AuthenticationRepository>().currentUser.id;
 
     return MultiRepositoryProvider(
       providers: [
@@ -40,7 +41,15 @@ class HomePage extends StatelessWidget {
               ..loadTasks(),
           ),
         ],
-        child: const MyHomeView(),
+        child: BlocBuilder<LanguageCubit, LanguageState>(
+          builder: (context, state) {
+            return Localizations.override(
+              context: context,
+              locale: Locale(state.language),
+              child: const MyHomeView(),
+            );
+          },
+        ),
       ),
     );
   }

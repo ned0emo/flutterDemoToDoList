@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../language.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../active_tasks/active_tasks_cubit.dart';
 import '../completed_tasks/completed_tasks_cubit.dart';
 
@@ -15,7 +15,7 @@ class ActiveTasksTabView extends StatelessWidget {
         if (state is ActiveTasksError) {
           return Center(
             child: Text(
-              appLanguage.listLoadError,
+              AppLocalizations.of(context)!.listLoadError,
               style: const TextStyle(
                 fontSize: 18,
               ),
@@ -84,7 +84,7 @@ class ActiveTasksTabView extends StatelessWidget {
 
           return Center(
             child: Text(
-              appLanguage.addTaskTip,
+              AppLocalizations.of(context)!.addTaskTip,
               style: const TextStyle(
                 fontSize: 18,
               ),
@@ -95,7 +95,7 @@ class ActiveTasksTabView extends StatelessWidget {
 
         return Center(
           child: Text(
-            appLanguage.unknownError,
+            AppLocalizations.of(context)!.unknownError,
             style: const TextStyle(
               fontSize: 18,
             ),

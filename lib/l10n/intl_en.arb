@@ -1,0 +1,33 @@
+{
+    "changeThemeNotify": "To apply the theme, restart the application",
+    "changeLanguageNotify": "To apply the language, restart the application",
+    "wrongEmail": "wrong email format",
+    "wrongPassword": "wrong password format",
+    "password": "password",
+
+    "addTask": "Add task",
+    "inputTaskText": "Enter the task text",
+    "cancel": "Cancel",
+    "add": "Add",
+    "toDoList": "To Do List",
+    "inProcess": "Active",
+    "completed": "Completed",
+
+    "login": "Login",
+    "authenticationError": "Authentication error",
+    "loginCapital": "LOGIN",
+    "createAccountCapital": "CREATE ACCOUNT",
+    "googleLogin": "LOGIN WITH GOOGLE",
+
+    "registerError": "Registration error",
+    "passwordConfirm": "confirm password",
+    "passwordNotEqual": "passwords don\"t match",
+    "registerCapital": "REGISTER",
+    "register": "Register",
+
+    "listLoadError": "Error loading the list",
+    "addTaskTip": "To add a task, click the \"+\" button",
+    "unknownError": "Unknown error",
+    "completedTaskIsEmpty": "No completed tasks",
+    "email": "email"
+}

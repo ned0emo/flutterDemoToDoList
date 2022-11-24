@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../language.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../completed_tasks/completed_tasks_cubit.dart';
 
 class CompletedTasksTabView extends StatelessWidget{
@@ -14,7 +14,7 @@ class CompletedTasksTabView extends StatelessWidget{
         if (state is CompletedTasksError) {
           return Center(
             child: Text(
-              appLanguage.listLoadError,
+              AppLocalizations.of(context)!.listLoadError,
               style: const TextStyle(
                 fontSize: 18,
               ),
@@ -67,7 +67,7 @@ class CompletedTasksTabView extends StatelessWidget{
 
           return Center(
             child: Text(
-              appLanguage.completedTaskIsEmpty,
+              AppLocalizations.of(context)!.completedTaskIsEmpty,
               style: const TextStyle(
                 fontSize: 18,
               ),
@@ -78,7 +78,7 @@ class CompletedTasksTabView extends StatelessWidget{
 
         return Center(
           child: Text(
-            appLanguage.unknownError,
+            AppLocalizations.of(context)!.unknownError,
             style: const TextStyle(
               fontSize: 18,
             ),

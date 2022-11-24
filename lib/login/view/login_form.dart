@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:formz/formz.dart';
 
-import '../../language.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../register/view/register_page.dart';
 import '../cubit/login_cubit.dart';
 
@@ -20,7 +20,7 @@ class LoginForm extends StatelessWidget {
             ..hideCurrentSnackBar()
             ..showSnackBar(
               SnackBar(
-                  content: Text(state.errorMessage ?? appLanguage.authenticationError)),
+                  content: Text(state.errorMessage ?? AppLocalizations.of(context)!.authenticationError)),
             );
         }
       },
@@ -56,9 +56,9 @@ class _EmailInput extends StatelessWidget {
           onChanged: (email) => context.read<LoginCubit>().emailChanged(email),
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
-            labelText: appLanguage.email,
+            labelText: AppLocalizations.of(context)!.email,
             helperText: '',
-            errorText: state.email.invalid ? appLanguage.wrongEmail : null,
+            errorText: state.email.invalid ? AppLocalizations.of(context)!.wrongEmail : null,
           ),
         );
       },
@@ -77,9 +77,9 @@ class _PasswordInput extends StatelessWidget {
               context.read<LoginCubit>().passwordChanged(password),
           obscureText: true,
           decoration: InputDecoration(
-            labelText: appLanguage.password,
+            labelText: AppLocalizations.of(context)!.password,
             helperText: '',
-            errorText: state.password.invalid ? appLanguage.wrongPassword : null,
+            errorText: state.password.invalid ? AppLocalizations.of(context)!.wrongPassword : null,
           ),
         );
       },
@@ -99,7 +99,7 @@ class _LoginButton extends StatelessWidget {
                 onPressed: state.status.isValidated
                     ? () => context.read<LoginCubit>().loginWithEmail()
                     : null,
-                child: Text(appLanguage.login.toUpperCase()),
+                child: Text(AppLocalizations.of(context)!.login.toUpperCase()),
               );
       },
     );
@@ -113,7 +113,7 @@ class _SignUpButton extends StatelessWidget {
     return TextButton(
       onPressed: () => Navigator.of(context).push<void>(RegisterPage.route()),
       child: Text(
-        appLanguage.createAccountCapital,
+        AppLocalizations.of(context)!.createAccountCapital,
         style: TextStyle(color: theme.primaryColor),
       ),
     );
@@ -125,7 +125,7 @@ class _GoogleLoginButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton.icon(
       label: Text(
-        appLanguage.googleLogin,
+        AppLocalizations.of(context)!.googleLogin,
       ),
       icon: const Icon(FontAwesomeIcons.google),
       onPressed: () => context.read<LoginCubit>().loginWithGoogle(),
