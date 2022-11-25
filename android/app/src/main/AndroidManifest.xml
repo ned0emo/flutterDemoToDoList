@@ -5,7 +5,7 @@
 
     <application
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/main_icon"
         android:label="Список задач">
         <activity
             android:name=".MainActivity"

@@ -11,27 +11,31 @@ class RegisterPage extends StatelessWidget {
   const RegisterPage({super.key});
 
   static Route<void> route() {
-    return MaterialPageRoute(builder: (_) => const RegisterPage());
+    return MaterialPageRoute(
+      builder: (_) => BlocBuilder<LanguageCubit, LanguageState>(
+        builder: (context, state) {
+          return Localizations.override(
+            context: context,
+            locale: Locale(state.language),
+            child: const RegisterPage(),
+          );
+        },
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LanguageCubit, LanguageState>(builder: (context, state) {
-      return Localizations.override(
-        context: context,
-        locale: Locale(state.language),
-        child: Scaffold(
-          appBar: AppBar(title: Text(AppLocalizations.of(context)!.register)),
-          body: Padding(
-            padding: const EdgeInsets.all(8),
-            child: BlocProvider<RegisterCubit>(
-              create: (_) =>
-                  RegisterCubit(context.read<AuthenticationRepository>()),
-              child: const RegisterForm(),
-            ),
-          ),
+    return Scaffold(
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.register)),
+      body: Padding(
+        padding: const EdgeInsets.all(8),
+        child: BlocProvider<RegisterCubit>(
+          create: (_) =>
+              RegisterCubit(context.read<AuthenticationRepository>()),
+          child: const RegisterForm(),
         ),
-      );
-    });
+      ),
+    );
   }
 }

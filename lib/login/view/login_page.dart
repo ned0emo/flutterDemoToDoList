@@ -11,47 +11,47 @@ import 'login_form.dart';
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
-  static Page<void> page() => const MaterialPage<void>(child: LoginPage());
+  static Page<void> page() => MaterialPage<void>(
+        child: BlocBuilder<LanguageCubit, LanguageState>(
+          builder: (context, state) {
+            return Localizations.override(
+              context: context,
+              locale: Locale(state.language),
+              child: const LoginPage(),
+            );
+          },
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LanguageCubit, LanguageState>(
-      builder: (context, state) {
-        return Localizations.override(
-          context: context,
-          locale: Locale(state.language),
-          child: Scaffold(
-            appBar: AppBar(
-              title: Text(AppLocalizations.of(context)!.login),
-              actions: <Widget>[
-                IconButton(
-                  onPressed: () =>
-                      BlocProvider.of<LanguageCubit>(context).changeLanguage(),
-                  icon: const Icon(Icons.language),
-                ),
-                BlocBuilder<ThemeCubit, ThemeState>(builder: (context, state) {
-                  return IconButton(
-                    onPressed: () {
-                      context.read<ThemeCubit>().changeTheme();
-                    },
-                    icon: Icon(state is ThemeDark
-                        ? Icons.light_mode
-                        : Icons.dark_mode),
-                  );
-                }),
-              ],
-            ),
-            body: Padding(
-              padding: const EdgeInsets.all(8),
-              child: BlocProvider(
-                create: (_) =>
-                    LoginCubit(context.read<AuthenticationRepository>()),
-                child: const LoginForm(),
-              ),
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.login),
+        actions: <Widget>[
+          IconButton(
+            onPressed: () =>
+                BlocProvider.of<LanguageCubit>(context).changeLanguage(),
+            icon: const Icon(Icons.language),
           ),
-        );
-      },
+          BlocBuilder<ThemeCubit, ThemeState>(builder: (context, state) {
+            return IconButton(
+              onPressed: () {
+                context.read<ThemeCubit>().changeTheme();
+              },
+              icon:
+                  Icon(state is ThemeDark ? Icons.light_mode : Icons.dark_mode),
+            );
+          }),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8),
+        child: BlocProvider(
+          create: (_) => LoginCubit(context.read<AuthenticationRepository>()),
+          child: const LoginForm(),
+        ),
+      ),
     );
   }
 }
